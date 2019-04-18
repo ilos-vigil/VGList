@@ -107,3 +107,4 @@ venv.bak/
 *.vscode
 *.exe
 guide.md
+vglist.db
