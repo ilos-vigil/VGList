@@ -5,27 +5,24 @@ import os
 import vgui
 
 
-class MyWindow(QtCore.QMetaObject):
-    def __init__(self):
-        super(MyWindow, self).__init__()
-        uic.loadUi('vgui.ui', self)
-        self.show()
+def setUI(vgui, db):
+    rows = db.load_tables()
 
+    vgui.tableWidget.setColumnCount(5)
+    vgui.tableWidget.setRowCount(1)
+    rowIndex = 0
+    for row in rows:
+        vgui.tableWidget.insertRow(5)
+        vgui.tableWidget.row
+        print(row)
+        for i in range(1, len(row)):
+            print(i)
+            print(row[i])
+            # Add text to the row
+            vgui.tableWidget.setItem(
+                rowIndex, i-1, QtWidgets.QTableWidgetItem(str(row[i])))
+    rowIndex += 1
 
-class UI(QtWidgets.QWidget):
-    def __init__(self):
-        super().__init__()
-        self.init_UI()
-
-    def init_UI(self):
-        app = QtWidgets.QApplication([])
-        window = QtWidgets.QWidget()
-        layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(QtWidgets.QPushButton('Top'))
-        layout.addWidget(QtWidgets.QPushButton('Bottom'))
-        window.setLayout(layout)
-        window.show()
-        app.exec_()
 
 class DB():
     def __init__(self):
@@ -38,7 +35,7 @@ class DB():
             self.cursor = self.conn.cursor()
         except sqlite3.Error as e:
             print(e)
-        
+
     def create_tables(self):
         try:
             game_table = """
@@ -69,14 +66,16 @@ class DB():
         except sqlite3.Error as e:
             print(e)
 
+
 if __name__ == "__main__":
     # SQLite
-    DB = DB()
+    db = DB()
     # UI
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = vgui.Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    window = QtWidgets.QMainWindow()
+    vgui = vgui.Ui_MainWindow()
+    vgui.setupUi(window)
+    setUI(vgui, db)
+    window.show()
 
     sys.exit(app.exec_())
