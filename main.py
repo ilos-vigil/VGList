@@ -55,30 +55,32 @@ class DB():
             print(e)
 
 
-db = DB()
-
-
 def configure_table():
-    # Change table header
+    vgui.tableWidget.setColumnCount(6)
+    vgui.tableWidget.hideColumn(0)
+    vgui.tableWidget.setHorizontalHeaderLabels(
+        ["ID", "Name", "Developer", "Publisher", "Release Date", "Rating"])
+    vgui.tableWidget.setSortingEnabled(False)
+    vgui.tableWidget.setEditTriggers(
+        QtWidgets.QAbstractItemView.NoEditTriggers)
     load_table()
 
 
 def load_table(query="SELECT * FROM GAME"):
     rows = db.load_tables(query)
 
-    vgui.tableWidget.setColumnCount(5)
     vgui.tableWidget.setRowCount(0)  # remove all item on table
     vgui.tableWidget.setRowCount(len(rows))
     rowIndex = 0
     for row in rows:
         vgui.tableWidget.row
         # print(row)
-        for i in range(1, len(row)):
+        for i in range(0, len(row)):
             # print(i)
             # print(row[i])
             # Add text to the row
             vgui.tableWidget.setItem(
-                rowIndex, i-1, QtWidgets.QTableWidgetItem(str(row[i])))
+                rowIndex, i, QtWidgets.QTableWidgetItem(str(row[i])))
         rowIndex += 1
 
 
@@ -96,7 +98,8 @@ def search():
 
 
 def insert():
-    insert = vgui.checkBox_insert.isChecked
+    insert = vgui.checkBox_insert.isChecked()
+    id = vgui.lineEdit_ID.text()
     name = vgui.lineEdit_name.text()
     developer = vgui.lineEdit_developer.text()
     publisher = vgui.lineEdit_publisher.text()
@@ -105,39 +108,39 @@ def insert():
 
     if insert:
         query = f"INSERT OR IGNORE INTO game (NAME, DEVELOPER, PUBLISHER, RELEASE_DATE, RATING) VALUES ('{name}', '{developer}', '{publisher}', '{release_date}' , {rating})"
-        db.add_row(query)
-        row_count = vgui.tableWidget.rowCount()
-        vgui.tableWidget.setRowCount(row_count+1)
-        vgui.tableWidget.setItem(
-            row_count, 0, QtWidgets.QTableWidgetItem(name))
-        vgui.tableWidget.setItem(
-            row_count, 1, QtWidgets.QTableWidgetItem(developer))
-        vgui.tableWidget.setItem(
-            row_count, 2, QtWidgets.QTableWidgetItem(publisher))
-        vgui.tableWidget.setItem(
-            row_count, 3, QtWidgets.QTableWidgetItem(release_date))
-        vgui.tableWidget.setItem(
-            row_count, 4, QtWidgets.QTableWidgetItem(str(rating)))
     else:
-        pass
+        query = f"UPDATE game SET NAME = '{name}', DEVELOPER = '{developer}', PUBLISHER = '{publisher}', RELEASE_DATE = '{release_date}', RATING = {rating} WHERE ID = {id}"
+
+    db.add_row(query)
+    load_table()
 
 
 def update():
     vgui.checkBox_insert.setChecked(False)
-    vgui.lineEdit_name.setText("a")
-    vgui.lineEdit_developer.setText("b")
-    vgui.lineEdit_publisher.setText("c")
-    vgui.lineEdit_release.setText("d")
-    vgui.spinBox_rating.setValue(1)
+    vgui.lineEdit_ID.setText(vgui.tableWidget.item(
+        vgui.tableWidget.currentRow(), 0).text())
+    vgui.lineEdit_name.setText(vgui.tableWidget.item(
+        vgui.tableWidget.currentRow(), 1).text())
+    vgui.lineEdit_developer.setText(vgui.tableWidget.item(
+        vgui.tableWidget.currentRow(), 2).text())
+    vgui.lineEdit_publisher.setText(vgui.tableWidget.item(
+        vgui.tableWidget.currentRow(), 3).text())
+    vgui.lineEdit_release.setText(vgui.tableWidget.item(
+        vgui.tableWidget.currentRow(), 4).text())
+    vgui.spinBox_rating.setValue(int(vgui.tableWidget.item(
+        vgui.tableWidget.currentRow(), 5).text()))
+    vgui.pushButton_update.setText("Update")
 
 
 def change():
     if vgui.checkBox_insert.isChecked:
+        vgui.lineEdit_ID.setText("")
         vgui.lineEdit_name.setText("")
         vgui.lineEdit_developer.setText("")
         vgui.lineEdit_publisher.setText("")
         vgui.lineEdit_release.setText("")
         vgui.spinBox_rating.setValue(100)
+        vgui.pushButton_update.setText("Insert")
 
 
 def setUI():
@@ -150,6 +153,7 @@ def setUI():
 
 
 if __name__ == "__main__":
+    db = DB()
     # UI
     app = QtWidgets.QApplication(sys.argv)
     window = QtWidgets.QMainWindow()
