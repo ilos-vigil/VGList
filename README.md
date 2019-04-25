@@ -2,6 +2,8 @@
 
 Simple desktop application to manage your video game
 
+![VGList](src/img/main.png)
+
 ## Requirement
 
 * PyQt5
