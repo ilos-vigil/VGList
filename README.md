@@ -5,17 +5,8 @@ Simple desktop application to manage your video game
 ## Requirement
 
 * PyQt5
-* SQLite
-
-## Installation
-
-1. Install pyqt5
-
-    ```
-    pip install pyqt5
-    ```
-
-2. Download and install SQLite at https://www.sqlite.org/download.html
+* Qt Designer
+* SQLite Database
 
 ## Contribute
 
